@@ -73,8 +73,8 @@ class MovieFederatedDM(LightningDataModule):
         trainset = MovieLensDataset(train_rating_path, train_usermovie_path, None, None)
         # rows_by_sub = floor(len(trainset) / self.number_sub)
         # tr_subset = Subset(trainset, range(self.sub_id * rows_by_sub, (self.sub_id + 1) * rows_by_sub))
-        movieuser_train, movieuser_val = random_split(trainset, [round(len(trainset) * (1 - self.val_percent)),
-                                                                 round(len(trainset) * self.val_percent)])
+        number_of_train = round(len(trainset) * (1 - self.val_percent))
+        movieuser_train, movieuser_val = random_split(trainset, [number_of_train,len(trainset)-number_of_train])
 
         # Test set
         movieuser_test = MovieLensDataset("data/test/test_r.csv", "data/test/test_u.csv", None, None)
