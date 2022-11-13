@@ -4,24 +4,14 @@ import numpy as np
 import torch as th
 
 
-class MovieLensDataset(Dataset):
-    def __init__(self, rating_file, UserMovie_file, transform=None, target_transform=None):
-        """
-        annotations_file: ratings file (ratings.csv looks like : id, score)
-        """
-        self.ratings = pd.read_csv(rating_file);
-        self.UserMovie_file = UserMovie_file
-        self.transform = transform
-        self.target_transform = target_transform
+class MyDataset(Dataset):
+    def __init__(self, data, label, **hyperparameters):
+        super(MyDataset, self).__init__()
+        self.data = data
+        self.label = label
 
     def __len__(self):
-        return len(self.ratings)
+        return len(self.data)
 
-    def __getitem__(self, idx):
-        self.UserMovie = pd.read_csv(self.UserMovie_file)
-        usermovie = np.asarray([self.UserMovie.iloc[idx, 1], self.UserMovie.iloc[idx, 2]])
-        label = self.ratings.iloc[idx, 1]
-        usermovie = th.from_numpy(usermovie)
-        if self.target_transform:
-            label = self.target_transform(label)
-        return usermovie, label
+    def __getitem__(self, i):
+        return self.data[i], self.label[i]

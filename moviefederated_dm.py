@@ -1,3 +1,4 @@
+import pandas as pd
 from torch.utils.data import DataLoader, Subset, random_split
 from torchvision import transforms
 from torchvision.datasets import MNIST
@@ -6,7 +7,7 @@ from pytorch_lightning import LightningDataModule
 # To Avoid Crashes with a lot of nodes
 import torch.multiprocessing
 
-from utilits import MovieLensDataset
+from utilits import MyDataset
 
 torch.multiprocessing.set_sharing_strategy('file_system')
 
@@ -68,30 +69,38 @@ class MovieFederatedDM(LightningDataModule):
 
         train_rating_path = "data/" + exp + "/rating" + str(num_of_split) + "_" + str(sub_id) + ".csv"
         train_usermovie_path = "data/" + exp + "/user" + str(num_of_split) + "_" + str(sub_id) + ".csv"
+
         # Training / validation set
-
-        trainset = MovieLensDataset(train_rating_path, train_usermovie_path, None, None)
-        # rows_by_sub = floor(len(trainset) / self.number_sub)
-        # tr_subset = Subset(trainset, range(self.sub_id * rows_by_sub, (self.sub_id + 1) * rows_by_sub))
-        number_of_train = round(len(trainset) * (1 - self.val_percent))
-        movieuser_train, movieuser_val = random_split(trainset, [number_of_train,len(trainset)-number_of_train])
-
         # Test set
-        movieuser_test = MovieLensDataset("data/test/test_r.csv", "data/test/test_u.csv", None, None)
-        # rows_by_sub = floor(len(testset) / self.number_sub)
-        # te_subset = Subset(testset, range(self.sub_id * rows_by_sub, (self.sub_id + 1) * rows_by_sub))
 
-        # if len(testset) < self.number_sub:
-        #     raise ("Too much partitions")
+        X_train = pd.read_csv(train_usermovie_path)[["user", "movie"]].to_numpy()
+        y_train = pd.read_csv(train_rating_path)[["rating"]].to_numpy()
+
+        X_train = torch.as_tensor(X_train)
+        y_train = torch.as_tensor(y_train, dtype=torch.float).squeeze()
+
+        X_test = pd.read_csv("data/test/test_u.csv")[["user", "movie"]].to_numpy()
+        y_test = pd.read_csv("data/test/test_r.csv")[["rating"]].to_numpy()
+
+        X_test = torch.as_tensor(X_test)
+        y_test = torch.as_tensor(y_test, dtype=torch.float).squeeze()
+
+        max_rating = 5.0
+        min_rating = 1.0
+        y_train = (y_train - min_rating) / (max_rating - min_rating)
+        y_test = (y_test - min_rating) / (max_rating - min_rating)
+
+        train_dataset = MyDataset(X_train, y_train)
+        test_dataset = MyDataset(X_test, y_test)
+
+        number_of_train = round(len(train_dataset) * (1 - self.val_percent))
+        train_dataset, val_dataset = random_split(train_dataset, [number_of_train,len(train_dataset)-number_of_train])
 
         # DataLoaders
-        self.train_loader = DataLoader(movieuser_train, batch_size=self.batch_size, shuffle=True,
-                                       num_workers=self.num_workers)
-        self.val_loader = DataLoader(movieuser_val, batch_size=self.batch_size, shuffle=False,
-                                     num_workers=self.num_workers)
-        self.test_loader = DataLoader(movieuser_test, batch_size=self.batch_size, shuffle=False,
-                                      num_workers=self.num_workers)
-        print("Train: {} Val:{} Test:{}".format(len(movieuser_train), len(movieuser_val), len(movieuser_test)))
+        self.train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+        self.val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=True)
+        self.test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
+        print("Train: {} Val:{} Test:{}".format(len(train_dataset), len(val_dataset), len(test_dataset)))
 
     def train_dataloader(self):
         """

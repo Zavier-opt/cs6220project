@@ -63,16 +63,10 @@ class DNN(pl.LightningModule):
     def training_step(self, batch, batch_id):
         """
         """
-        acc= 0
         x, y = batch
         minmax = (1.0,5.0)
         criterion = nn.MSELoss()
         outputs = self(x[:, 0], x[:, 1], minmax=minmax)
-        #loss = F.cross_entropy(self(x), y)
-        _, pred_labels = torch.max(outputs, dim=1)
-        for pred_label, gt_label in zip(pred_labels.view(-1), y):
-            if pred_label + 1 == gt_label:
-                acc += 1
         loss = criterion(outputs, y)
         self.log("train_loss", loss, prog_bar=True)
         return loss
@@ -80,35 +74,21 @@ class DNN(pl.LightningModule):
     def validation_step(self, batch, batch_idx):
         """
         """
-        acc= 0
         x, y = batch
         minmax = (1.0,5.0)
         criterion = nn.MSELoss()
         outputs = self(x[:, 0], x[:, 1], minmax=minmax)
-        #loss = F.cross_entropy(self(x), y)
-        _, pred_labels = torch.max(outputs, dim=1)
-        for pred_label, gt_label in zip(pred_labels.view(-1), y):
-            if pred_label + 1 == gt_label:
-                acc += 1
         loss = criterion(outputs, y)
         self.log("val_loss", loss, prog_bar=True)
-        #self.log("val_metric", metric, prog_bar=True)
         return loss
 
     def test_step(self, batch, batch_idx):
         """
         """
-        acc= 0
         x, y = batch
         minmax = (1.0,5.0)
         criterion = nn.MSELoss()
         outputs = self(x[:, 0], x[:, 1], minmax=minmax)
-        #loss = F.cross_entropy(self(x), y)
-        _, pred_labels = torch.max(outputs, dim=1)
-        for pred_label, gt_label in zip(pred_labels.view(-1), y):
-            if pred_label + 1 == gt_label:
-                acc += 1
         loss = criterion(outputs, y)
         self.log("test_loss", loss, prog_bar=True)
-        #self.log("test_metric", metric, prog_bar=True)
         return loss
