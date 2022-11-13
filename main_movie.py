@@ -11,7 +11,7 @@ def recommand_execution(n, start, simulation, conntect_to=None, iid=True):
     for i in range(n):
         node = Node(
             DNN(),
-            MovieFederatedDM(experiment="user",num_of_split=3, sub_id=i, number_sub=n),
+            MovieFederatedDM(experiment="user",num_of_split=1, sub_id=i, number_sub=n),
             simulation=simulation,
         )
         node.start()
@@ -22,9 +22,31 @@ def recommand_execution(n, start, simulation, conntect_to=None, iid=True):
         nodes[0].connect_to(conntect_to[0], conntect_to[1])
 
     # Node Connection
-    for i in range(len(nodes) - 1):
-        nodes[i + 1].connect_to(nodes[i].host, nodes[i].port, full=True)
-        time.sleep(1)
+    nodes[1].connect_to(nodes[0].host,nodes[0].port)
+    nodes[2].connect_to(nodes[1].host,nodes[1].port)
+    nodes[3].connect_to(nodes[1].host,nodes[1].port)
+    nodes[4].connect_to(nodes[1].host,nodes[1].port)
+    nodes[5].connect_to(nodes[4].host,nodes[4].port)
+    nodes[6].connect_to(nodes[4].host,nodes[4].port)
+    nodes[7].connect_to(nodes[1].host,nodes[1].port)
+    nodes[8].connect_to(nodes[7].host,nodes[7].port)
+    nodes[9].connect_to(nodes[7].host,nodes[7].port)
+
+    nodes[10].connect_to(nodes[0].host,nodes[0].port)
+    nodes[11].connect_to(nodes[10].host,nodes[10].port)
+    nodes[12].connect_to(nodes[10].host,nodes[10].port)
+    nodes[13].connect_to(nodes[10].host,nodes[10].port)
+    nodes[14].connect_to(nodes[10].host,nodes[10].port)
+    nodes[15].connect_to(nodes[14].host,nodes[14].port)
+    nodes[16].connect_to(nodes[14].host,nodes[14].port)
+    nodes[17].connect_to(nodes[10].host,nodes[10].port)
+    nodes[18].connect_to(nodes[17].host,nodes[17].port)
+    nodes[19].connect_to(nodes[17].host,nodes[17].port)
+
+    time.sleep(5)
+    # for i in range(len(nodes) - 1):
+    #     nodes[i + 1].connect_to(nodes[i].host, nodes[i].port, full=True)
+    #     time.sleep(1)
 
     time.sleep(5)
     print("Starting...")
@@ -56,4 +78,4 @@ def recommand_execution(n, start, simulation, conntect_to=None, iid=True):
 if __name__ == "__main__":
     for _ in range(1):
         recommand_execution(20, True, True)
-        break
+        #break
