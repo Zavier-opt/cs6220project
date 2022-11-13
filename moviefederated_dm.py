@@ -43,19 +43,6 @@ class MovieFederatedDM(LightningDataModule):
         self.num_workers = num_workers
         self.val_percent = val_percent
 
-        # # Singletons of MNIST train and test datasets
-        # if MovieFederatedDM.mnist_train is None:
-        #     MovieFederatedDM.mnist_train = MNIST("", train=True, download=True, transform=transforms.ToTensor())
-        #     if not iid:
-        #         sorted_indexes = MovieFederatedDM.mnist_train.targets.sort()[1]
-        #         MovieFederatedDM.mnist_train.targets = MovieFederatedDM.mnist_train.targets[sorted_indexes]
-        #         MovieFederatedDM.mnist_train.data = MovieFederatedDM.mnist_train.data[sorted_indexes]
-        # if MovieFederatedDM.mnist_val is None:
-        #     MovieFederatedDM.mnist_val = MNIST("", train=False, download=True, transform=transforms.ToTensor())
-        #     if not iid:
-        #         sorted_indexes = MovieFederatedDM.mnist_val.targets.sort()[1]
-        #         MovieFederatedDM.mnist_val.targets = MovieFederatedDM.mnist_val.targets[sorted_indexes]
-        #         MovieFederatedDM.mnist_val.data = MovieFederatedDM.mnist_val.data[sorted_indexes]
         if self.sub_id + 1 > self.number_sub:
             raise ("Not exist the subset {}".format(self.sub_id))
         if self.experiment in {"user", "movie"}:

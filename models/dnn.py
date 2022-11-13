@@ -3,6 +3,7 @@ from torch import nn
 from torch.nn import functional as F
 import pytorch_lightning as pl
 from torchmetrics import Accuracy
+from torchmetrics import MeanSquaredError
 
 
 ###############################
@@ -14,7 +15,7 @@ class DNN(pl.LightningModule):
     Multilayer Perceptron (MLP) to solve MNIST with PyTorch Lightning.
     """
 
-    def __init__(self, metric=Accuracy, lr_rate=0.001, seed=None):  # low lr to avoid overfitting
+    def __init__(self, metric=MeanSquaredError, lr_rate=0.001, seed=None):  # low lr to avoid overfitting
 
         # Set seed for reproducibility iniciialization
         if seed is not None:
@@ -68,7 +69,7 @@ class DNN(pl.LightningModule):
         criterion = nn.MSELoss()
         outputs = self(x[:, 0], x[:, 1], minmax=minmax)
         loss = criterion(outputs, y)
-        self.log("train_loss", loss, prog_bar=True)
+        self.log("train_loss", loss, prog_bar=True, on_epoch=True)
         return loss
 
     def validation_step(self, batch, batch_idx):
@@ -79,7 +80,9 @@ class DNN(pl.LightningModule):
         criterion = nn.MSELoss()
         outputs = self(x[:, 0], x[:, 1], minmax=minmax)
         loss = criterion(outputs, y)
-        self.log("val_loss", loss, prog_bar=True)
+        metric = self.metric(outputs.squeeze(), y)
+        self.log("val_loss", loss, prog_bar=True, on_epoch=True)
+        self.log("val_metric", metric, prog_bar=True, on_epoch=True)
         return loss
 
     def test_step(self, batch, batch_idx):
@@ -90,5 +93,7 @@ class DNN(pl.LightningModule):
         criterion = nn.MSELoss()
         outputs = self(x[:, 0], x[:, 1], minmax=minmax)
         loss = criterion(outputs, y)
-        self.log("test_loss", loss, prog_bar=True)
+        metric = self.metric(outputs.squeeze(), y)
+        self.log("test_loss", loss, prog_bar=True, on_epoch=True)
+        self.log("test_metric", metric, prog_bar=True, on_epoch=True)
         return loss

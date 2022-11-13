@@ -35,7 +35,7 @@ def recommand_execution(n, start, simulation, conntect_to=None, iid=True):
 
     # Start Learning
     if start:
-        nodes[0].set_start_learning(rounds=2, epochs=2)
+        nodes[0].set_start_learning(rounds=1, epochs=100)
     else:
         time.sleep(20)
 
