@@ -1,5 +1,5 @@
-from moviefederated_dm2 import MovieFederatedDM2
-from models.dnn2 import DNN2
+from moviefederated_dm import MovieFederatedDM
+from models.dnn import DNN
 from p2pfl.node import Node
 import time
 
@@ -10,8 +10,8 @@ def recommand_execution(n, start, simulation, conntect_to=None, iid=True):
     nodes = []
     for i in range(n):
         node = Node(
-            DNN2(),
-            MovieFederatedDM2(experiment="movie",num_of_split=1, sub_id=i, number_sub=n,isRandom=True),
+            DNN(),
+            MovieFederatedDM(experiment="age",num_of_split=1, sub_id=i, number_sub=n,isRandom=True),
             simulation=simulation,
         )
         node.start()

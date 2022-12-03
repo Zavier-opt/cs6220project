@@ -43,7 +43,7 @@ class MovieFederatedDM(LightningDataModule):
 
         if self.sub_id + 1 > self.number_sub:
             raise ("Not exist the subset {}".format(self.sub_id))
-        if self.experiment in {"user", "movie"}:
+        if self.experiment in {"user", "movie","age","occupation"}:
             exp = self.experiment
         else:
             raise "The input experiment is invalid"
