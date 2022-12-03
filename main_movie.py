@@ -11,7 +11,7 @@ def recommand_execution(n, start, simulation, conntect_to=None, iid=True):
     for i in range(n):
         node = Node(
             DNN2(),
-            MovieFederatedDM2(experiment="age",num_of_split=1, sub_id=i, number_sub=n,isRandom=False),
+            MovieFederatedDM2(experiment="movie",num_of_split=1, sub_id=i, number_sub=n,isRandom=True),
             simulation=simulation,
         )
         node.start()
