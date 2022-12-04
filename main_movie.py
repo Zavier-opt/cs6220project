@@ -11,7 +11,7 @@ def recommand_execution(n, start, simulation, conntect_to=None, iid=True):
     for i in range(n):
         node = Node(
             DNN(),
-            MovieFederatedDM(experiment="age",num_of_split=1, sub_id=i, number_sub=n,isRandom=True),
+            MovieFederatedDM(experiment="age",num_of_split=2, sub_id=i, number_sub=n,isRandom=True),
             simulation=simulation,
         )
         node.start()
@@ -57,7 +57,7 @@ def recommand_execution(n, start, simulation, conntect_to=None, iid=True):
 
     # Start Learning
     if start:
-        nodes[0].set_start_learning(rounds=1, epochs=100)
+        nodes[0].set_start_learning(rounds=1, epochs=200)
     else:
         time.sleep(20)
 

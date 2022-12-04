@@ -23,7 +23,7 @@ class DNN(pl.LightningModule):
             torch.cuda.manual_seed_all(seed)
 
         super().__init__()
-        n_users, n_movies = 943, 1664
+        n_users, n_movies = 944, 1683
         n_factors = 50
         embedding_dropout = 0.02
         hidden = 10
